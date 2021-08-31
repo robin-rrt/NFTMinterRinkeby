@@ -1,1 +1,547 @@
+<html>
+  <head>
+    <!-- Moralis SDK code -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://unpkg.com/moralis/dist/moralis.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="styles.css">
 
+  </head>
+  <body>
+    <h1>NFT Minter Rinkeby</h1>
+	<h2 id="h2"></h2>
+	
+    <button class="btns" id="btn-connect">Connect Metamask</button>
+	
+	<br><br>
+	<div class=container-grey>
+	<br><br>
+    <input type="text" name="metadataName" id="metadataName" placeholder="Title">
+    <br><br>
+    <textarea name="metadataDescription" id="metadataDescription" col="30" rows="10" placeholder="Description"></textarea>
+	<br><br>
+    <input type="file" name="fileInput" id="fileInput">
+    <br><br>
+    <button class="btns" id="btn-mint" onclick="mint()">MINT NFT</button>
+</div>
+	<div id="transactionhash"></div>
+	<div id="opensea"></div>
+	
+<script>
+	$(document).ready(function(){
+		let flag=0;
+	  $("#btn-connect").click(async function(){
+		  const connectedAccount = await login();
+		  console.log(connectedAccount);
+		  if(flag==0){
+		  $("#h2").append("<b>Welcome<br>"+connectedAccount+"</b>.");
+		  flag=1;
+		  }
+		  $("#btn-connect").hide();
+
+		
+	  });
+	});
+	</script>
+
+    <script>
+      // connect to Moralis server
+      Moralis.initialize("yNqoJmxMFrDCszk5JYqYVUnzHiOZpiv7KTdZKT2O");
+      Moralis.serverURL = ("https://dwvdtcdb6jv5.moralisweb3.com:2053/server");
+
+	  var contract;
+	  var accounts;
+	  const NFTMinterAddress = "0xc1028756e014B0F9e1477Ed5534E441cDE2093ab";
+
+
+      const NFTMinterABI = [
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "approved",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "Approval",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "bool",
+				"name": "approved",
+				"type": "bool"
+			}
+		],
+		"name": "ApprovalForAll",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_tokenId",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "NFTOwner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "imageURL",
+				"type": "string"
+			}
+		],
+		"name": "NFTMinted",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "Transfer",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "_tokenID",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "approve",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "balanceOf",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "getApproved",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getTokenID",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			}
+		],
+		"name": "isApprovedForAll",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_tokenURI",
+				"type": "string"
+			}
+		],
+		"name": "mintNFT",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "name",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "ownerOf",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "safeTransferFrom",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes",
+				"name": "_data",
+				"type": "bytes"
+			}
+		],
+		"name": "safeTransferFrom",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"internalType": "bool",
+				"name": "approved",
+				"type": "bool"
+			}
+		],
+		"name": "setApprovalForAll",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes4",
+				"name": "interfaceId",
+				"type": "bytes4"
+			}
+		],
+		"name": "supportsInterface",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "symbol",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "tokenURI",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "transferFrom",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]
+	  
+      //Connect and login  
+      login = async() => {
+          Moralis.Web3.authenticate().then(function(user) {
+			console.log("Logged in");
+          })
+		  	const web3 = await Moralis.Web3.enable();
+    		contract = new web3.eth.Contract(NFTMinterABI, NFTMinterAddress);
+			
+			console.log(contract);
+			accounts = await web3.eth.getAccounts();
+			currentAccount = accounts[0];
+			return currentAccount;
+			
+      }
+
+
+
+      //Upload Image to IPFS
+      uploadImage = async() => {
+        const data = fileInput.files[0]
+        const file = new Moralis.File(data.name, data)
+        await file.saveIPFS();
+        console.log(file.ipfs());
+		alert("Image uploaded to IPFS");
+        return file.ipfs();
+      }
+      
+      //Upload Metadata to IPFS
+      uploadMetadata = async (imageURL) => {
+          const name = document.getElementById('metadataName');
+          const description = document.getElementById('metadataDescription');
+
+          const metadata = {
+              "name" : name,
+              "description" : description,
+              "image" : imageURL
+          }
+
+          const file = new Moralis.File("file.json", {base64 : btoa(JSON.stringify(metadata))});
+          await file.saveIPFS();
+		  console.log(file.ipfs());
+		  alert("Metadata uploaded to IPFS", file.ipfs());
+          return file.ipfs();
+      }
+      //Mint NFT with IPFS Metadata
+      mint = async() => {
+          const image = await uploadImage();
+          const metadata = await uploadMetadata(image);
+		  if(contract!=='undefined'){
+			try{
+				const tokenID = await contract.methods.getTokenID().call({from: accounts[0]}); //calling tokenID to redirect on OPENSEA
+				console.log("Token ID: ", tokenID);
+
+        		await contract.methods.mintNFT(metadata).send({from: accounts[0]}) //actually minting NFT.
+
+				.on('transactionHash', function(hash){
+    				alert("Your transaction can be found at: "+"https://rinkeby.etherscan.io/tx/"+hash);
+					$("#transactionhash")
+					.append("<b>Your transaction can be found at: <br>"+"<a href='https://rinkeby.etherscan.io/tx/"+hash+"'>https://rinkeby.etherscan.io/tx/"+hash+"</a></b");
+				})
+				
+				.on('receipt', function(receipt){
+    			// receipt example
+    			console.log(receipt);
+				alert("Your transaction has been confirmed at: " + "https://rinkeby.etherscan.io/tx/"+receipt.transactionHash);
+				$("#opensea")
+					.append("<b>Your NFT can be viewed on OpenSea at: <br>"+"<a href='https://testnets.opensea.io/assets/"+NFTMinterAddress+"/"+tokenID+"'>https://testnets.opensea.io/assets/"+NFTMinterAddress+"/"+tokenID+"</a></b");
+				
+				//redirecting to OpenSea
+				// if (window.confirm('Redirecting you to OpenSea to view your NFT. Click "Confirm" to proceed')){
+				// 	window.open("https://testnets.opensea.io/assets/"+NFTMinterAddress+"/"+tokenID, "_blank") || window.location.replace("https://testnets.opensea.io/assets/"+NFTMinterAddress+"/"+tokenID);
+				// 	};
+				})
+
+				.on('error', function(error, receipt){ 
+					// If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
+    				console.log("The transaction was rejected", error);
+				});
+
+      	} catch (e) {
+        	console.log('Error while minting function was called ', e)
+      		}
+	}
+}
+
+
+    </script>
+  </body>
+</html>
