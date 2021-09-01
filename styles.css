@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 * {
     font-family: Montserrat Light;
     background-color: #1d1d1d;
@@ -60,4 +61,68 @@ h1 {
     margin-left: 15%;
     margin-right: 15%;
     background-color: #131111;
+=======
+* {
+    font-family: Montserrat Light;
+    background-color: #1d1d1d;
+    color: white;
+    text-align: center;
+    padding-bottom: 2rem;
+}
+
+h1 {
+    text-align: center;
+    font-size: 2rem;
+    padding: 2rem 1rem 0.5rem 1rem;
+}
+
+#metadataName{
+    border-bottom: whitesmoke;
+    color: white;
+    padding: 0.5% 5% 0.5% 5%;
+    margin-left: 0.5%;
+    margin-right: 0.5%;
+    min-width: 10%;
+    font-size: large;
+    text-align: center;
+    background-color: #413e3e;
+    border-radius: 1rem;
+    font-family: Lato Black;
+}
+
+#metadataDescription{
+    border-bottom: whitesmoke;
+    color: white;
+    padding: 1% 15% 0% 15%;
+    font-size: 1rem;
+    text-align: centre;
+    background-color: #413e3e;
+    border-radius: 0.25rem;
+}
+
+#fileInput{
+    color: white;
+    /* padding: 1rem 10rem 0rem 10rem; */
+    font-size: 1rem;
+    text-align: centre;
+    background-color: #131111;
+    border-radius: 0.25rem;
+}
+
+.btns{
+    background-color: rgb(226, 162, 43);
+    text-align: center;
+    border-radius: 2rem;
+    padding: 1.5rem;
+    margin: 1%;
+    font-size: 1.25em;
+    font-family: Lato;
+}
+
+.container-grey{
+    align-content: center;
+    margin-left: 15%;
+    margin-right: 15%;
+    background-color: #131111;
+>>>>>>> 1f78b7d47848e1d5215f3503d16fe7ace9812703
 }

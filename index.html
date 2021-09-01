@@ -486,7 +486,9 @@
       //Upload Metadata to IPFS
       uploadMetadata = async (imageURL) => {
           const name = document.getElementById('metadataName');
+		  console.log(name);
           const description = document.getElementById('metadataDescription');
+		  console.log(description);
 
           const metadata = {
               "name" : name,
