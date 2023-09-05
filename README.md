@@ -23,6 +23,7 @@ Metamask authentication and IPFS Upload is achieved using the Moralis API. _
 To run locally: 
 - Clone the repo using `git clone`
 - If using VS Code install a plugin called `Live Server` and run it with `index.html`. 
+- That's all folks!
 
 
 
