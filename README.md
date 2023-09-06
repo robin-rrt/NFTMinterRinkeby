@@ -6,7 +6,8 @@
 _This application is made for experimental/educational purposes, please make sure you are on Rinkeby Testnet when interacting with it._
 
 
-NFT Contract: https://rinkeby.etherscan.io/token/0xc1028756e014b0f9e1477ed5534e441cde2093ab
+`NFT Contract:` https://rinkeby.etherscan.io/token/0xc1028756e014b0f9e1477ed5534e441cde2093ab 
+
 
 ### Usage
 - Connect to Rinkeby on Metamask
